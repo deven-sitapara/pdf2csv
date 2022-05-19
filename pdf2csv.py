@@ -1,6 +1,9 @@
 # https://docs.aws.amazon.com/textract/latest/dg/examples-export-table-csv.html 
 
+import configparser
+from pathlib import Path
 from pydoc import cli
+from time import time
 import webbrowser, os
 import json
 import boto3
@@ -8,6 +11,7 @@ import io
 from io import BytesIO
 import sys
 from pprint import pprint
+import base64
 
 
 def get_rows_columns_map(table_result, blocks_map):
@@ -44,7 +48,11 @@ def get_text(result, blocks_map):
 
 
 def get_table_csv_results(file_name):
-
+    
+    # print('PDF loaded', file_name)
+    # file_contents = Path(file_name).read_text()
+    # bytes_test = file_contents # base64.b64encode(file_contents.encode("ascii"))
+    # print(bytes_test)
     with open(file_name, 'rb') as file:
         img_test = file.read()
         bytes_test = bytearray(img_test)
@@ -52,15 +60,26 @@ def get_table_csv_results(file_name):
 
     # process using PDF bytes
     # get the results
+
+    config = configparser.ConfigParser()
+    config.read('./.aws/credentials')
+    aws_access_key_id = config.get("default","aws_access_key_id")
+    aws_secret_access_key = config.get("default","aws_secret_access_key")
+    region_name = config.get("default","region_name")
+    # print(aws_access_key_id , aws_secret_access_key , region_name)
+
     client = boto3.client('textract',
-        aws_access_key_id='AKIASGQTMRYOSSJB4DK7',
-        aws_secret_access_key='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',
-        region_name='us-east-1'
+        aws_access_key_id=aws_access_key_id,
+        aws_secret_access_key=aws_secret_access_key,
+        region_name=region_name
      )
     
 
     # print(client)
+    # response = client.analyze_document(Document={'Bytes': bytes_test}, FeatureTypes=['TABLES'])
     response = client.analyze_document(Document={'Bytes': bytes_test}, FeatureTypes=['TABLES'])
+        # ErrorAWS Textract - UnsupportedDocumentException - PDF
+        # https://stackoverflow.com/questions/60501332/aws-textract-unsupporteddocumentexception-pdf
 
     # Get the text blocks
     blocks=response['Blocks']
@@ -101,16 +120,22 @@ def generate_table_csv(table_result, blocks_map, table_index):
     return csv
 
 def main(file_name):
+
+    # print(os.path.basename(file_name))
+    basename = os.path.basename(file_name)
+    output_file = os.path.splitext(basename)[0] + ".csv"
+    # print(csv_file_name)
+
     table_csv = get_table_csv_results(file_name)
-
-    output_file = 'output.csv'
-
+ 
+    # output_file =  'output.csv'
+ 
     # replace content
     with open(output_file, "wt") as fout:
         fout.write(table_csv)
 
     # show the results
-    print('CSV OUTPUT FILE: ', output_file)
+    # print('CSV OUTPUT FILE: ', output_file)
 
 
 if __name__ == "__main__":
@@ -119,24 +144,3 @@ if __name__ == "__main__":
 
 
 
-# Works 
-# ------------------------------
-# ./venv/Scripts/python ./pdf2csv.py ./pdf/table.pdf 
-
-
-# NOT WORKING 
-# ------------------------------
-# ./venv/Scripts/python ./pdf2csv.py ./pdf/Roland\ Pro\ Reseller\ \(AVR\)\ Price\ List\ -\ April\ 1\,\ 2020.pdf
-# Image loaded ./pdf/Roland Pro Reseller (AVR) Price List - April 1, 2020.pdf
-# Traceback (most recent call last):
-#   File "D:\laragon\www\gkb_req\pricedonkey\pdf2csv\pdf2csv.py", line 118, in <module>
-#     main(file_name)
-#   File "D:\laragon\www\gkb_req\pricedonkey\pdf2csv\pdf2csv.py", line 104, in main
-#     table_csv = get_table_csv_results(file_name)
-#   File "D:\laragon\www\gkb_req\pricedonkey\pdf2csv\pdf2csv.py", line 63, in get_table_csv_results
-#     response = client.analyze_document(Document={'Bytes': bytes_test}, FeatureTypes=['TABLES'])
-#   File "D:\laragon\www\gkb_req\pricedonkey\pdf2csv\venv\lib\site-packages\botocore\client.py", line 415, in _api_call
-#     return self._make_api_call(operation_name, kwargs)
-#   File "D:\laragon\www\gkb_req\pricedonkey\pdf2csv\venv\lib\site-packages\botocore\client.py", line 745, in _make_api_call
-#     raise error_class(parsed_response, operation_name)
-# botocore.errorfactory.UnsupportedDocumentException: An error occurred (UnsupportedDocumentException) when calling the AnalyzeDocument operation: Request has unsupported document format       

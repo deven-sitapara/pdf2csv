@@ -1,3 +1,6 @@
 /output.csv
 /pdf
 /venv
+
+# Except this file
+!.gitignore
