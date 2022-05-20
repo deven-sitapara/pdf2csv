@@ -25,3 +25,29 @@
     #     raise error_class(parsed_response, operation_name)
     # botocore.errorfactory.UnsupportedDocumentException: An error occurred (UnsupportedDocumentException) when calling the AnalyzeDocument operation: Request has unsupported document format
 ```
+
+## Working with asynchronous function
+
+```
+    ./venv/Scripts/python start_doc_analysis_for_table_extraction.py pdf/AF_Dealer_Pricelist_072020_w.pdf
+    ./venv/Scripts/python get_doc_analysis_for_table_extraction.py db3810f9ece9712679f24e44a6f694578ccff3f1a53e68ccd89afe26b1ce89ad csv/AF_Dealer_Pricelist_072020_w.csv
+
+
+    ./venv/Scripts/python start_doc_analysis_for_table_extraction.py pdf/Audinate\ -\ DVS\ and\ Via\ Reseller\ Pricing\ -\ January\ 6\,\ 2020.pdf
+    ./venv/Scripts/python get_doc_analysis_for_table_extraction.py 4d36e28cbe67df2caec0ac7c044198b546ac69bb72a154bf7cfa4e4407d55441 ./csv/Audinate\ -\ DVS\ and\ Via\ Reseller\ Pricing\ -\ January\ 6\,\ 2020.csv
+ 
+
+
+```
+
+## Credential file format
+
+./.aws/credentials
+[default]
+aws_access_key_id=xxxxxxxxxxxxxx
+aws_secret_access_key=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+region_name=us-east-1
+role_arn=arn:aws:iam::nnnnnnnnnnn:role/roleTopic
+
+[s3]
+bucket=bucketname
