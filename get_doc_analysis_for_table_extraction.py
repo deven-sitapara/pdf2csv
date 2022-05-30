@@ -1,3 +1,4 @@
+import json
 import sys
 import boto3
 from pprint import pprint
@@ -66,6 +67,7 @@ def GetResults(jobId, file_name):
     f.close()
 
     f = open( file_name.replace("csv","json") , "wt")
+    f.write("[")
     f.close()
 
     while finished == False:
@@ -73,13 +75,20 @@ def GetResults(jobId, file_name):
         response = None
 
         if paginationToken == None:
-            response = textract.get_document_analysis(JobId=jobId, MaxResults=maxResults)
+            response = textract.get_document_analysis(JobId=jobId)
         else:
-            response = textract.get_document_analysis(JobId=jobId, MaxResults=maxResults,
-                                                           NextToken=paginationToken)
+            response = textract.get_document_analysis(JobId=jobId,NextToken=paginationToken)
  
+
+        response_blocks = response['Blocks']
+        # remove Geometry field from response_blocks
+        for json_res in response_blocks:
+            del json_res['Geometry']
+
+        # Writing to response.json
+        json_object = json.dumps(response_blocks, indent = 4)
         f = open( file_name.replace("csv","json") , "at")
-        f.write(str(response['Blocks']))
+        f.write(json_object+",")
         f.close()
 
         blocks = response['Blocks']
@@ -89,9 +98,9 @@ def GetResults(jobId, file_name):
         with open(output_file, "at") as fout:
             fout.write(table_csv)
         # show the results
-        print('Detected Document Text')
-        print('Pages: {}'.format(response['DocumentMetadata']['Pages']))
-        print('OUTPUT TO CSV FILE: ', output_file)
+        # print('Detected Document Text')
+        # print('Pages: {}'.format(response['DocumentMetadata']['Pages']))
+        # print('OUTPUT TO CSV FILE: ', output_file)
 
         # Display block information
         # for block in blocks:
@@ -103,6 +112,11 @@ def GetResults(jobId, file_name):
             paginationToken = response['NextToken']
         else:
             finished = True
+    
+
+    f = open( file_name.replace("csv","json") , "at")
+    f.write("]")
+    f.close()
 
 
 def get_rows_columns_map(table_result, blocks_map):
@@ -122,11 +136,10 @@ def get_rows_columns_map(table_result, blocks_map):
 
                         # get the text value
                         rows[row_index][col_index] = get_text(cell, blocks_map)
-                except KeyError:
-                    print("Error extracting Table data in col map - {}:".format(KeyError))
+                except KeyError as e:
+                    print("Error extracting Table data in col map - {}:".format(e.args))
                     pass
     return rows
-
 
 def get_text(result, blocks_map):
     text = ''
@@ -134,14 +147,39 @@ def get_text(result, blocks_map):
         for relationship in result['Relationships']:
             if relationship['Type'] == 'CHILD':
                 for child_id in relationship['Ids']:
-                    try:
+                    if child_id not in blocks_map:
+                        print("Page:",  result["Page"] , ", Error extracting Table data in get text - {}:".format(child_id))
+                        # print("blocks_map:",  blocks_map)
+                        # print("result:",  result)
+                        # exit()
+                    else:
                         word = blocks_map[child_id]
-                        # if word['BlockType'] == 'WORD' : 
-                        if 'Text' in word.keys(): 
+                        if word['BlockType'] == 'WORD':
                             text += word['Text'] + ' '
                         if word['BlockType'] == 'SELECTION_ELEMENT':
-                            if word['SelectionStatus'] == 'SELECTED':
-                                text += 'X '
+                            if word['SelectionStatus'] =='SELECTED':
+                                text +=  'X '    
+    return text
+
+def get_text__(result, blocks_map):
+    text = ''
+    if 'Relationships' in result:
+        for relationship in result['Relationships']:
+            if relationship['Type'] == 'CHILD':
+                for child_id in relationship['Ids']:
+                    try:
+
+                        if child_id not in blocks_map:
+                            print("Page - {}".format(result["Page"]))
+                            print("Error extracting Table data in get text - {}:".format(child_id))
+                        else:
+                            word = blocks_map[child_id]
+                            # if word['BlockType'] == 'WORD' : 
+                            if 'Text' in word.keys(): 
+                                text += word['Text'] + ' '
+                            if word['BlockType'] == 'SELECTION_ELEMENT':
+                                if word['SelectionStatus'] == 'SELECTED':
+                                    text += 'X '
                     except KeyError as e:
                         print("Page - {}".format(result["Page"]))
                         print(child_id)
