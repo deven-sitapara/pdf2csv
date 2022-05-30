@@ -4,6 +4,12 @@ from pprint import pprint
 
 from start_doc_analysis_for_table_extraction import load_aws_config
 
+
+# reference :
+# https://docs.aws.amazon.com/textract/latest/dg/examples-export-table-csv.html
+#  https://github.com/aws-samples/amazon-textract-code-samples/blob/master/python/12-pdf-text.py#L59
+
+
 # jobId = '9a1bf2b3a3a495a9a465e8c9bad6ca55d3a30d5fe07d4ec027e490a44481f1e4'
 # # region_name = 'region-name'
 # file_name = "output-file-name.csv"
@@ -43,6 +49,11 @@ def GetResults(jobId, file_name):
     paginationToken = None
     finished = False
 
+
+    # clear content of a file 
+    f = open(file_name,"w")
+    f.close()
+
     while finished == False:
 
         response = None
@@ -52,6 +63,10 @@ def GetResults(jobId, file_name):
         else:
             response = textract.get_document_analysis(JobId=jobId, MaxResults=maxResults,
                                                            NextToken=paginationToken)
+ 
+        f = open("testing.json", "at")
+        f.write(str(response['Blocks']))
+        f.close()
 
         blocks = response['Blocks']
         table_csv = get_table_csv_results(blocks)
@@ -76,7 +91,8 @@ def GetResults(jobId, file_name):
             finished = True
 
 
-def get_rows_columns_map(table_result, blocks_map):
+def 
+(table_result, blocks_map):
     rows = {}
     for relationship in table_result['Relationships']:
         if relationship['Type'] == 'CHILD':
@@ -93,7 +109,7 @@ def get_rows_columns_map(table_result, blocks_map):
                         # get the text value
                         rows[row_index][col_index] = get_text(cell, blocks_map)
                 except KeyError:
-                    print("Error extracting Table data - {}:".format(KeyError))
+                    print("Error extracting Table data in col map - {}:".format(KeyError))
                     pass
     return rows
 
@@ -106,13 +122,16 @@ def get_text(result, blocks_map):
                 for child_id in relationship['Ids']:
                     try:
                         word = blocks_map[child_id]
-                        if word['BlockType'] == 'WORD':
+                        # if word['BlockType'] == 'WORD' : 
+                        if 'Text' in word.keys(): 
                             text += word['Text'] + ' '
                         if word['BlockType'] == 'SELECTION_ELEMENT':
                             if word['SelectionStatus'] == 'SELECTED':
                                 text += 'X '
-                    except KeyError:
-                        print("Error extracting Table data - {}:".format(KeyError))
+                    except KeyError as e:
+                        print("Page - {}".format(result["Page"]))
+                        print(child_id)
+                        print("Error extracting Table data in get text - {}:".format(e.args))
 
     return text
 
@@ -133,6 +152,7 @@ def get_table_csv_results(blocks):
 
     csv = ''
     for index, table in enumerate(table_blocks):
+        # print(index + 1)
         csv += generate_table_csv(table, blocks_map, index + 1)
         csv += '\n\n'
 
@@ -150,7 +170,7 @@ def generate_table_csv(table_result, blocks_map, table_index):
     for row_index, cols in rows.items():
 
         for col_index, text in cols.items():
-            csv += '{}'.format(text) + ","
+            csv +=  '"{}"'.format(text.replace('"','""')) + ","
         csv += '\n'
 
     csv += '\n\n\n'

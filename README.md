@@ -30,13 +30,19 @@
 
 ```
     ./venv/Scripts/python start_doc_analysis_for_table_extraction.py pdf/AF_Dealer_Pricelist_072020_w.pdf
-    ./venv/Scripts/python get_doc_analysis_for_table_extraction.py db3810f9ece9712679f24e44a6f694578ccff3f1a53e68ccd89afe26b1ce89ad csv/AF_Dealer_Pricelist_072020_w.csv
+    ./venv/Scripts/python get_doc_analysis_for_table_extraction.py c3704e90b1370a2cc5ae45ebfc96ae79d19b4fd369745c5c27abd7b1bc38e49d ./csv/AF_Dealer_Pricelist_072020_w.csv
 
 
     ./venv/Scripts/python start_doc_analysis_for_table_extraction.py pdf/Audinate\ -\ DVS\ and\ Via\ Reseller\ Pricing\ -\ January\ 6\,\ 2020.pdf
-    ./venv/Scripts/python get_doc_analysis_for_table_extraction.py 4d36e28cbe67df2caec0ac7c044198b546ac69bb72a154bf7cfa4e4407d55441 ./csv/Audinate\ -\ DVS\ and\ Via\ Reseller\ Pricing\ -\ January\ 6\,\ 2020.csv
- 
+    ./venv/Scripts/python get_doc_analysis_for_table_extraction.py 9a53135474d199f2abff288d04c475649673edcb63a0aafd89e7a8e189b4e7d5 ./csv/Audinate\ -\ DVS\ and\ Via\ Reseller\ Pricing\ -\ January\ 6\,\ 2020.csv
 
+
+    ./venv/Scripts/python start_doc_analysis_for_table_extraction.py pdf/af_test/AF_Dealer_Pricelist_072020_w-2.pdf
+    ./venv/Scripts/python get_doc_analysis_for_table_extraction.py fb5357be2572e6b5abb1cc22aeea3c620b01722b66db3b28440f48633fa564fe ./csv/af_test/AF_Dealer_Pricelist_072020_w-2.pdf
+
+
+    ./venv/Scripts/python start_doc_analysis_for_table_extraction.py pdf/af_test/AF_Dealer_Pricelist_072020_w-7.pdf
+    ./venv/Scripts/python get_doc_analysis_for_table_extraction.py 7aede3bf044fd0a66c73ac2a721a547088a6cd5513d650566461255c5cfbfab3 ./csv/af_test/AF_Dealer_Pricelist_072020_w-7.pdf 
 
 ```
 
@@ -51,3 +57,17 @@ role_arn=arn:aws:iam::nnnnnnnnnnn:role/roleTopic
 
 [s3]
 bucket=bucketname
+
+## Save new Package
+
+```
+    ./venv/Scripts/python -m pip freeze > requirements.txt
+
+```
+
+## Install Packages
+
+```
+    ./venv/Scripts/python  -m pip install -r requirements.txt
+
+```

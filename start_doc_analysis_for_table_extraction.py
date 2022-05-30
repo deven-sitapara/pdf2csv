@@ -66,9 +66,7 @@ class DocumentProcessor:
         self.sqs.create_queue(QueueName=sqsQueueName)
         self.sqsQueueUrl = self.sqs.get_queue_url(QueueName=sqsQueueName)['QueueUrl']
 
-        attribs = self.sqs.get_queue_attributes(QueueUrl=self.sqsQueueUrl,
-                                                AttributeNames=['QueueArn'])['Attributes']
-
+        attribs = self.sqs.get_queue_attributes(QueueUrl=self.sqsQueueUrl, AttributeNames=['QueueArn'])['Attributes']
         sqsQueueArn = attribs['QueueArn']
 
         # Subscribe SQS queue to SNS topic
@@ -112,7 +110,6 @@ def load_aws_config():
     bucket_name = config.get("s3","bucket")
     return {"aws_access_key_id":aws_access_key_id, "aws_secret_access_key":aws_secret_access_key, "region_name":region_name, "role_arn":role_arn, "bucket_name":bucket_name}
 
-    
 
 def main():
     
@@ -126,6 +123,9 @@ def main():
     access_key = config["aws_access_key_id"]
     secret_key = config["aws_secret_access_key"]
 
+    # print(document)
+    # print(config)
+    
     analyzer = DocumentProcessor(access_key, secret_key,roleArn, bucket, document, region_name)
     analyzer.CreateTopicandQueue()
     analyzer.ProcessDocument()
