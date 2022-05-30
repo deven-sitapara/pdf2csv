@@ -49,9 +49,23 @@ def GetResults(jobId, file_name):
     paginationToken = None
     finished = False
 
+    # Mode	Description
+    # 'r'	Open a file for reading. (default)
+    # 'w'	Open a file for writing. Creates a new file if it does not exist or truncates the file if it exists.
+    # 'x'	Open a file for exclusive creation. If the file already exists, the operation fails.
+    # 'a'	Open for appending at the end of the file without truncating it. Creates a new file if it does not exist.
+    # 't'	Open in text mode. (default)
+    # 'b'	Open in binary mode.
+    # '+'	Open a file for updating (reading and writing)
+
+    # https://thepythonguru.com/python-how-to-read-and-write-csv-files/
+    
 
     # clear content of a file 
     f = open(file_name,"w")
+    f.close()
+
+    f = open( file_name.replace("csv","json") , "wt")
     f.close()
 
     while finished == False:
@@ -64,7 +78,7 @@ def GetResults(jobId, file_name):
             response = textract.get_document_analysis(JobId=jobId, MaxResults=maxResults,
                                                            NextToken=paginationToken)
  
-        f = open("testing.json", "at")
+        f = open( file_name.replace("csv","json") , "at")
         f.write(str(response['Blocks']))
         f.close()
 
@@ -91,8 +105,8 @@ def GetResults(jobId, file_name):
             finished = True
 
 
-def 
-(table_result, blocks_map):
+def get_rows_columns_map(table_result, blocks_map):
+
     rows = {}
     for relationship in table_result['Relationships']:
         if relationship['Type'] == 'CHILD':

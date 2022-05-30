@@ -37,7 +37,7 @@ class DocumentProcessor:
         jobFound = False
         print ( self.bucket,  self.document)
         response = self.textract.start_document_analysis(DocumentLocation={'S3Object': {'Bucket': self.bucket, 'Name': self.document}},
-                FeatureTypes=["TABLES", "FORMS"], NotificationChannel={'RoleArn': self.roleArn, 'SNSTopicArn': self.snsTopicArn})
+                FeatureTypes=["TABLES"], NotificationChannel={'RoleArn': self.roleArn, 'SNSTopicArn': self.snsTopicArn})
 
         with open(self.document, 'rb') as file:
             img_test = file.read()
