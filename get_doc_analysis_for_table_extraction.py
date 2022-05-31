@@ -66,9 +66,26 @@ def GetResults(jobId, file_name):
     f = open(file_name,"w")
     f.close()
 
-    f = open( file_name.replace("csv","json") , "wt")
-    f.write("[")
-    f.close()
+    csv_file = file_name.replace("csv","json") 
+    # f = open( csv_file , "wt")
+    # f.write("[")
+    # f.close()
+    output_file = file_name
+
+    print(csv_file)
+    # Opening JSON file
+    f = open(csv_file)
+    # returns JSON object as 
+    # a dictionary
+    blocks = json.load(f)
+    table_csv = get_table_csv_results(blocks)
+    print(table_csv)
+    with open(output_file, "at") as fout:
+        fout.write(table_csv)
+
+    exit()
+
+
 
     while finished == False:
 
