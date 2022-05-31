@@ -241,7 +241,7 @@ def get_table_csv_results(response_block_list):
         for index, table in enumerate(table_blocks):
             # print(index + 1)
             csv += generate_table_csv(table, blocks_map, index + 1)
-            csv += '\n\n'
+            # csv += '\n\n'
 
     return csv
 
@@ -249,18 +249,27 @@ def get_table_csv_results(response_block_list):
 def generate_table_csv(table_result, blocks_map, table_index):
     rows = get_rows_columns_map(table_result, blocks_map)
 
-    table_id = 'Table_' + str(table_index)
+    # table_id = 'Table_' + str(table_index)
 
     # get cells.
-    csv = 'Table: {0}\n\n'.format(table_id)
+    # csv = 'Table: {0}\n\n'.format(table_id)
+    csv = ''
 
     for row_index, cols in rows.items():
 
-        for col_index, text in cols.items():
-            csv +=  '"{}"'.format(text.replace('"','""')) + ","
-        csv += '\n'
+        # check empty row 
+        empty_row = True
+        for index, val in cols.items():
+            if val:
+                empty_row = False 
+                break
 
-    csv += '\n\n\n'
+        if not empty_row:
+            for col_index, text in cols.items():
+                csv += '"{}"'.format(text.replace('"','""')) + ","
+            csv += '\n'
+
+    # csv += '\n\n\n'
     return csv
 
 response_blocks = GetResults(jobId, file_name)
