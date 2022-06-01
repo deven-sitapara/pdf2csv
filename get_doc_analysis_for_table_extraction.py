@@ -2,8 +2,8 @@ import json
 import sys
 import boto3
 from pprint import pprint
-
 from start_doc_analysis_for_table_extraction import load_aws_config
+import itertools
 
 
 # reference :
@@ -63,20 +63,14 @@ def GetResults(jobId, file_name):
     
 
     # clear content of csv_file
-    f = open(file_name,"w")
-    f.close()
+    # f = open(file_name,"w")
+    # f.close()
     
     output_csv_file = file_name
 
-    # Just for debugging use json file
-    # output_json_file = file_name.replace("csv","json") 
+    # Uncomment: For debugging use json file
+    output_json_file = file_name.replace("csv","json") 
     # print(output_json_file)
-
-    # csv_file = file_name.replace("csv","json") 
-    # # f = open( csv_file , "wt")
-    # # f.write("[")
-    # # f.close()
-    # output_file = file_name
 
     # f = open('./json/AF_Dealer_Pricelist_072020_w copy.json')
     # blocks = json.load(f)
@@ -84,9 +78,7 @@ def GetResults(jobId, file_name):
     # table_csv = get_table_csv_results(blocks)
     # print(table_csv)
 
-
-
-    # print(csv_file)
+    # debug code from json file directly
     # # Opening JSON file
     # f = open(csv_file)
     # # returns JSON object as 
@@ -109,8 +101,11 @@ def GetResults(jobId, file_name):
         else:
             response = textract.get_document_analysis(JobId=jobId,NextToken=paginationToken)
  
+        #print(type(response)) # <class 'dict'>
+        
         response_blocks = response['Blocks']    # list 
-
+        # write_json_file(output_json_file,response_blocks) 
+        # exit()
         # remove Geometry field from response_blocks
         for json_res in response_blocks:
             del json_res['Geometry']
@@ -138,20 +133,32 @@ def GetResults(jobId, file_name):
             paginationToken = response['NextToken']
         else:
             finished = True    
+    
 
-    # Convert list to json and write in json file 
-    # f = open(output_json_file , "wt")
-    # response_block_json_serialized = json.dumps(response_block_list,indent=4)
-    # f.write(response_block_json_serialized)
-    # f.close()
+    # Flat the list [["a","b"], ["c","d","e"]] -> ['a', 'b', 'c', 'd', 'e']
+    response_block_list = list(itertools.chain.from_iterable(response_block_list))
+
+    # print(response_block_list)
+    # exit()
+    
+    # Uncomment:For debugging use json file
+    # Convert list to json and write in json file
+    write_json_file(output_json_file,response_block_list) 
+
     # response_block_json = json.loads(response_block_json_serialized)    # obj now contains a dict of the data
     # print(type(response_block_list))
     # exit()
+
     converted_table_csv = get_table_csv_results( response_block_list)
-    with open(output_csv_file, "at") as csv:
+    with open(output_csv_file, "wt") as csv:
         csv.write(converted_table_csv)
 
 
+def write_json_file(output_json_file,response_block_list):
+    f = open(output_json_file , "wt")
+    response_block_json_serialized = json.dumps(response_block_list,indent=4)
+    f.write(response_block_json_serialized)
+    f.close()
 
 def get_rows_columns_map(table_result, blocks_map):
 
@@ -229,19 +236,18 @@ def get_table_csv_results(response_block_list):
     blocks_map = {}
     table_blocks = []
     csv = ''
-    for blocks in response_block_list:
-        for block in blocks:
-            blocks_map[block['Id']] = block
-            if block['BlockType'] == "TABLE":
-                table_blocks.append(block)
+    for block in response_block_list:
+        blocks_map[block['Id']] = block
+        if block['BlockType'] == "TABLE":
+            table_blocks.append(block)
 
-        if len(table_blocks) <= 0:
-            return "<b> NO Table FOUND </b>"
+    # if len(table_blocks) <= 0:
+    #     return "<b> NO Table FOUND </b>"
 
-        for index, table in enumerate(table_blocks):
-            # print(index + 1)
-            csv += generate_table_csv(table, blocks_map, index + 1)
-            # csv += '\n\n'
+    for index, table in enumerate(table_blocks):
+        # print(index + 1)
+        csv += generate_table_csv(table, blocks_map, index + 1)
+        # csv += '\n\n'
 
     return csv
 

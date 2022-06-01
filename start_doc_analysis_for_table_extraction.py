@@ -35,21 +35,21 @@ class DocumentProcessor:
     def ProcessDocument(self):
 
         jobFound = False
-        print ( self.bucket,  self.document)
+        # print ( self.bucket,  self.document)
         response = self.textract.start_document_analysis(DocumentLocation={'S3Object': {'Bucket': self.bucket, 'Name': self.document}},
                 FeatureTypes=["TABLES"], NotificationChannel={'RoleArn': self.roleArn, 'SNSTopicArn': self.snsTopicArn})
 
         with open(self.document, 'rb') as file:
             img_test = file.read()
             bytes_test = bytearray(img_test)
-            print('PDF loaded', self.document)
+            # print('PDF loaded', self.document)
 
  
-        print('Processing type: Analysis')
+        # print('Processing type: Analysis')
+        # print('Start Job Id: ' + response['JobId'])
+        print(response['JobId'])
 
-        print('Start Job Id: ' + response['JobId'])
-
-        print('Done!')
+        # print('Done!')
 
     def CreateTopicandQueue(self):
 
@@ -97,8 +97,8 @@ class DocumentProcessor:
                 'Policy': policy
             })
         self.request_id = response["ResponseMetadata"]["RequestId"]
-        print(self.request_id)
-        print(response)
+        # print(self.request_id)
+        # print(response)
 
 def load_aws_config():
     config = configparser.ConfigParser()
