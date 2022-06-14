@@ -1,6 +1,10 @@
 /output.csv
 /pdf
 /venv
-
+__pycache__
+/csv
+/json
+*.log
+*.csv
 # Except this file
 !.gitignore

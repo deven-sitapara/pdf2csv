@@ -1,4 +1,6 @@
 import configparser
+import logging
+import os
 import sys
 import boto3
 import time
@@ -18,13 +20,19 @@ class DocumentProcessor:
     request_id = ''
 
     def __init__(self, access_key, secret_key,role, bucket, document, region):
+
+        logging.basicConfig(filename="./log/log.log",
+                    format='%(asctime)s %(message)s',
+                    filemode='w')
+
+
         self.roleArn = role
         self.bucket = bucket
         self.document = document
         self.region_name = region
         self.access_key = access_key
         self.secret_key = secret_key
- 
+
         self.textract = boto3.client('textract',     
                     aws_access_key_id=self.access_key,aws_secret_access_key=self.secret_key,region_name=self.region_name
                     )
@@ -100,6 +108,31 @@ class DocumentProcessor:
         # print(self.request_id)
         # print(response)
 
+    
+    def uploadFile(self):
+        """Upload a file to an S3 bucket
+
+        :param file_name: File to upload
+        :param bucket: Bucket to upload to
+        :param object_name: S3 object name. If not specified then file_name is used
+        :return: True if file was uploaded, else False
+        """
+        # inside pdf folder 
+        s3_location = self.document
+        s3_client = boto3.client('s3')
+        try:
+            # Upload the file
+            # s3_client.Object(self.bucket, s3_location).upload_file(self.document)
+            s3_client.upload_file(Filename=self.document,Bucket=self.bucket,Key=s3_location)
+            # with open(self.document, 'rb') as data:
+            #     s3_client.upload_fileobj(data, self.bucket, s3_location)
+        except Exception as e:
+            logging.error(e)
+            return False
+
+        return True
+        
+
 def load_aws_config():
     config = configparser.ConfigParser()
     config.read('./.aws/credentials')
@@ -110,7 +143,7 @@ def load_aws_config():
     bucket_name = config.get("s3","bucket")
     return {"aws_access_key_id":aws_access_key_id, "aws_secret_access_key":aws_secret_access_key, "region_name":region_name, "role_arn":role_arn, "bucket_name":bucket_name}
 
-
+  
 def main():
     
     document = sys.argv[1]     # document = 'pdf/AF_Dealer_Pricelist_072020_w.pdf'
@@ -127,8 +160,9 @@ def main():
     # print(config)
     
     analyzer = DocumentProcessor(access_key, secret_key,roleArn, bucket, document, region_name)
-    analyzer.CreateTopicandQueue()
-    analyzer.ProcessDocument()
+    if(analyzer.uploadFile()):
+        analyzer.CreateTopicandQueue()
+        analyzer.ProcessDocument()
 
 if __name__ == "__main__":
     main()
