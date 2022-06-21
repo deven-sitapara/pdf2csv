@@ -18,6 +18,7 @@ class DocumentProcessor:
     snsTopicArn = ''
     processType = ''
     request_id = ''
+    textract_response = ''
 
     def __init__(self, access_key, secret_key,role, bucket, document, region):
 
@@ -44,7 +45,7 @@ class DocumentProcessor:
 
         jobFound = False
         # print ( self.bucket,  self.document)
-        response = self.textract.start_document_analysis(DocumentLocation={'S3Object': {'Bucket': self.bucket, 'Name': self.document}},
+        self.textract_response = self.textract.start_document_analysis(DocumentLocation={'S3Object': {'Bucket': self.bucket, 'Name': self.document}},
                 FeatureTypes=["TABLES"], NotificationChannel={'RoleArn': self.roleArn, 'SNSTopicArn': self.snsTopicArn})
 
         with open(self.document, 'rb') as file:
@@ -55,7 +56,7 @@ class DocumentProcessor:
  
         # print('Processing type: Analysis')
         # print('Start Job Id: ' + response['JobId'])
-        print(response['JobId'])
+        # print(self.textract_response['JobId'])
 
         # print('Done!')
 

@@ -29,8 +29,11 @@
 ## Working with asynchronous function
 
 ```
+    ./venv/Scripts/python process_pdf.py ./pdf/AF_Dealer_Pricelist_072020_w.pdf ./csv/AF_Dealer_Pricelist_072020_w.csv
+
+
     ./venv/Scripts/python start_doc_analysis_for_table_extraction.py pdf/AF_Dealer_Pricelist_072020_w.pdf
-    ./venv/Scripts/python get_doc_analysis_for_table_extraction.py 57354ddb40af9c0b7ae48d8af078bbeb7e209c2f5fd738171f47ad0f6d9b453b ./csv/AF_Dealer_Pricelist_072020_w.csv
+    ./venv/Scripts/python get_doc_analysis_for_table_extraction.py dfa0c5cee58367aed71003fffa0a3be2d93176befe67422a890ad8c8ba57fad4 ./csv/AF_Dealer_Pricelist_072020_w.csv
 
 
     ./venv/Scripts/python start_doc_analysis_for_table_extraction.py pdf/Audinate\ -\ DVS\ and\ Via\ Reseller\ Pricing\ -\ January\ 6\,\ 2020.pdf

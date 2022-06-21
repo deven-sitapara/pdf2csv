@@ -15,22 +15,12 @@ import itertools
 # # region_name = 'region-name'
 # file_name = "output-file-name.csv"
 
-jobId = sys.argv[1]
-file_name = sys.argv[2]
+# jobId = sys.argv[1]
+# file_name = sys.argv[2]
 
-config = load_aws_config()
+# config = load_aws_config()
 
 # textract = boto3.client('textract', region_name=config["region_name"])
-
-# jobId = '189ed0fab5f89cf889c78db66970a957ee90f8125bc775c28a4e37be5d0091eb'
-# region_name = 'us-east-1'
-# textract = boto3.client('textract', region_name=region_name)
-
-# jobId = 'job-id'
-# region_name = 'region-name'
-# file_name = "output-file-name.csv"
-# textract = boto3.client('textract', region_name=region_name)
-textract = boto3.client('textract', region_name=config["region_name"])
 
 # Display information about a block
 def DisplayBlockInfo(block):
@@ -45,7 +35,7 @@ def DisplayBlockInfo(block):
     if block['BlockType'] != 'PAGE':
         print("Confidence: " + "{:.2f}".format(block['Confidence']) + "%")
 
-def GetResults(jobId, file_name):
+def GetResults(textract, jobId, file_name):
     maxResults = 1000
     paginationToken = None
     finished = False
@@ -278,4 +268,18 @@ def generate_table_csv(table_result, blocks_map, table_index):
     # csv += '\n\n\n'
     return csv
 
-response_blocks = GetResults(jobId, file_name)
+# response_blocks = GetResults(jobId, file_name)
+
+
+
+def main():
+    
+    jobId = sys.argv[1]
+    file_name = sys.argv[2]
+    config = load_aws_config()
+    textract = boto3.client('textract', region_name=config["region_name"])
+    response_blocks = GetResults(textract, jobId, file_name)
+
+
+if __name__ == "__main__":
+    main()
