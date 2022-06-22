@@ -99,6 +99,13 @@ role_arn=arn:aws:iam::nnnnnnnnnnn:role/roleTopic
 [s3]
 bucket=bucketname
 
+## Activate venv
+
+```
+    source ./venv/Scripts/activate
+
+```
+
 ## Save new Package
 
 ```
@@ -106,10 +113,14 @@ bucket=bucketname
 
 ```
 
-## Install Packages
+## Install / Uninstall Packages
 
 ```
-    ./venv/Scripts/python  -m pip install -r requirements.txt
+    chmod -R 0775 /opt/bitnami/apache/htdocs_dev/pdf2csv/
+    pip install -r ./requirements.txt
+    ./venv/Scripts/pip install -r requirements.txt
+    rm -rf ./venv/Lib/site-packages/*
+    ./venv/Scripts/python  -m pip uninstall -r  requirements.txt -y
 
 ```
 

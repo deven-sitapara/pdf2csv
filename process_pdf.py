@@ -19,11 +19,12 @@ def main():
     region_name = config["region_name"]
     access_key = config["aws_access_key_id"]
     secret_key = config["aws_secret_access_key"]
+    pdf_key = config["pdf_key"]
 
     # print(document)
     # print(config)
     
-    analyzer = DocumentProcessor(access_key, secret_key,roleArn, bucket, document, region_name)
+    analyzer = DocumentProcessor(access_key, secret_key,roleArn, bucket, document, region_name,pdf_key)
     if(analyzer.uploadFile()):
         analyzer.CreateTopicandQueue()
         analyzer.ProcessDocument()

@@ -20,7 +20,7 @@ class DocumentProcessor:
     request_id = ''
     textract_response = ''
 
-    def __init__(self, access_key, secret_key,role, bucket, document, region):
+    def __init__(self, access_key, secret_key,role, bucket, document, region,pdf_key):
 
         logging.basicConfig(filename="./log/log.log",
                     format='%(asctime)s %(message)s',
@@ -33,8 +33,12 @@ class DocumentProcessor:
         self.region_name = region
         self.access_key = access_key
         self.secret_key = secret_key
-
+        self.pdf_key = pdf_key
         self.textract = boto3.client('textract',     
+                    aws_access_key_id=self.access_key,aws_secret_access_key=self.secret_key,region_name=self.region_name
+                    )
+
+        self.s3 = boto3.client('s3',     
                     aws_access_key_id=self.access_key,aws_secret_access_key=self.secret_key,region_name=self.region_name
                     )
 
@@ -119,16 +123,14 @@ class DocumentProcessor:
         :return: True if file was uploaded, else False
         """
         # inside pdf folder 
-        s3_location = self.document
-        s3_client = boto3.client('s3')
         try:
             # Upload the file
             # s3_client.Object(self.bucket, s3_location).upload_file(self.document)
-            s3_client.upload_file(Filename=self.document,Bucket=self.bucket,Key=s3_location)
+            self.s3.upload_file(Filename=self.document,Bucket=self.bucket,Key=self.pdf_key)
             # with open(self.document, 'rb') as data:
             #     s3_client.upload_fileobj(data, self.bucket, s3_location)
         except Exception as e:
-            logging.error(e)
+            logging.error(e.args)
             return False
 
         return True
@@ -142,7 +144,8 @@ def load_aws_config():
     region_name = config.get("default","region_name")
     role_arn = config.get("default","role_arn")
     bucket_name = config.get("s3","bucket")
-    return {"aws_access_key_id":aws_access_key_id, "aws_secret_access_key":aws_secret_access_key, "region_name":region_name, "role_arn":role_arn, "bucket_name":bucket_name}
+    pdf_key = config.get("s3","pdf_key")
+    return {"aws_access_key_id":aws_access_key_id, "aws_secret_access_key":aws_secret_access_key, "region_name":region_name, "role_arn":role_arn, "bucket_name":bucket_name, "pdf_key":pdf_key}
 
   
 def main():
@@ -156,11 +159,12 @@ def main():
     region_name = config["region_name"]
     access_key = config["aws_access_key_id"]
     secret_key = config["aws_secret_access_key"]
+    pdf_key = config["pdf_key"]
 
     # print(document)
     # print(config)
     
-    analyzer = DocumentProcessor(access_key, secret_key,roleArn, bucket, document, region_name)
+    analyzer = DocumentProcessor(access_key, secret_key,roleArn, bucket, document, region_name,pdf_key)
     if(analyzer.uploadFile()):
         analyzer.CreateTopicandQueue()
         analyzer.ProcessDocument()
