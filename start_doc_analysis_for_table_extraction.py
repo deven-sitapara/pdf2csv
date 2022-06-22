@@ -34,6 +34,7 @@ class DocumentProcessor:
         self.access_key = access_key
         self.secret_key = secret_key
         self.pdf_key = pdf_key
+        self.s3_pdf_location = self.pdf_key + str(os.path.basename(self.document))
         self.textract = boto3.client('textract',     
                     aws_access_key_id=self.access_key,aws_secret_access_key=self.secret_key,region_name=self.region_name
                     )
@@ -49,7 +50,7 @@ class DocumentProcessor:
 
         jobFound = False
         # print ( self.bucket,  self.document)
-        self.textract_response = self.textract.start_document_analysis(DocumentLocation={'S3Object': {'Bucket': self.bucket, 'Name': self.document}},
+        self.textract_response = self.textract.start_document_analysis(DocumentLocation={'S3Object': {'Bucket': self.bucket, 'Name': self.s3_pdf_location}},
                 FeatureTypes=["TABLES"], NotificationChannel={'RoleArn': self.roleArn, 'SNSTopicArn': self.snsTopicArn})
 
         with open(self.document, 'rb') as file:
