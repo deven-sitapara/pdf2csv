@@ -59,7 +59,7 @@ def GetResults(textract, jobId, file_name):
     output_csv_file = file_name
 
     # Uncomment: For debugging use json file
-    output_json_file = file_name.replace("csv","json") 
+    # output_json_file = file_name.replace("csv","json") 
     # print(output_json_file)
 
     # f = open('./json/AF_Dealer_Pricelist_072020_w copy.json')
@@ -133,7 +133,7 @@ def GetResults(textract, jobId, file_name):
     
     # Uncomment:For debugging use json file
     # Convert list to json and write in json file
-    write_json_file(output_json_file,response_block_list) 
+    # write_json_file(output_json_file,response_block_list) 
 
     # response_block_json = json.loads(response_block_json_serialized)    # obj now contains a dict of the data
     # print(type(response_block_list))

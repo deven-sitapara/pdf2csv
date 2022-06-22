@@ -2,12 +2,13 @@ import os
 import pathlib
 import unittest
 
+# ./venv/Scripts/python  -m  unittest -v ./test/sample_test.py
 class TestStringMethods(unittest.TestCase):
 
 
     def test_get_directoty_from_path(self):
-        path = ".pdf/test/AF_Dealer_Pricelist_072020_w.pdf"
-        # print(pathlib.Path(path).parent.resolve()))
+        path = "./pdf/test/AF_Dealer_Pricelist_072020_w.pdf"
+        print(os.path.abspath(path))
         self.assertEqual(".pdf\\test",str(pathlib.Path(path).parent.resolve()))
         
     def test_get_filename_from_path(self):

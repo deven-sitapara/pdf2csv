@@ -3,3 +3,5 @@ install
 py -m venv venv
 source ./venv/Scripts/activate
 ./venv/Scripts/pip install boto3
+
+pip install -r /path/to/requirements.txt

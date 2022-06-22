@@ -112,3 +112,10 @@ bucket=bucketname
     ./venv/Scripts/python  -m pip install -r requirements.txt
 
 ```
+
+## Test case
+
+```
+    ./venv/Scripts/python  -m  unittest -v ./test/sample_test.py
+
+```
