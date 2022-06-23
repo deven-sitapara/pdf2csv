@@ -1,6 +1,7 @@
 import configparser
 import logging
 import os
+import pathlib
 import sys
 import boto3
 import time
@@ -22,7 +23,8 @@ class DocumentProcessor:
 
     def __init__(self, access_key, secret_key,role, bucket, document, region,pdf_key):
 
-        logging.basicConfig(filename=os.path.abspath("./log/log.log"),
+        logging.basicConfig(filename=
+         str(pathlib.Path(__file__).parent.resolve()) + '/log/log.log',
                     format='%(asctime)s %(message)s',
                     filemode='w')
 
@@ -139,7 +141,9 @@ class DocumentProcessor:
 
 def load_aws_config():
     config = configparser.ConfigParser()
-    config.read( os.path.abspath('./.aws/credentials'))
+    # print(str(pathlib.Path(__file__).parent.resolve()) + '/.aws/credentials')
+    
+    config.read( str(pathlib.Path(__file__).parent.resolve()) + '/.aws/credentials')
     aws_access_key_id = config.get("default","aws_access_key_id")
     aws_secret_access_key = config.get("default","aws_secret_access_key")
     region_name = config.get("default","region_name")
