@@ -50,7 +50,7 @@ class DocumentProcessor:
 
         jobFound = False
         # print ( self.bucket,  self.document)
-        self.textract_response = self.textract.start_document_analysis(DocumentLocation={'S3Object': {'Bucket': self.bucket, 'Name': self.  }},
+        self.textract_response = self.textract.start_document_analysis(DocumentLocation={'S3Object': {'Bucket': self.bucket, 'Name': self.s3_pdf_location}},
                 FeatureTypes=["TABLES"], NotificationChannel={'RoleArn': self.roleArn, 'SNSTopicArn': self.snsTopicArn})
 
         with open(self.document, 'rb') as file:
