@@ -22,7 +22,7 @@ class DocumentProcessor:
 
     def __init__(self, access_key, secret_key,role, bucket, document, region,pdf_key):
 
-        logging.basicConfig(filename="./log/log.log",
+        logging.basicConfig(filename=os.path.abspath("./log/log.log"),
                     format='%(asctime)s %(message)s',
                     filemode='w')
 
@@ -50,7 +50,7 @@ class DocumentProcessor:
 
         jobFound = False
         # print ( self.bucket,  self.document)
-        self.textract_response = self.textract.start_document_analysis(DocumentLocation={'S3Object': {'Bucket': self.bucket, 'Name': self.s3_pdf_location}},
+        self.textract_response = self.textract.start_document_analysis(DocumentLocation={'S3Object': {'Bucket': self.bucket, 'Name': self.  }},
                 FeatureTypes=["TABLES"], NotificationChannel={'RoleArn': self.roleArn, 'SNSTopicArn': self.snsTopicArn})
 
         with open(self.document, 'rb') as file:
@@ -139,7 +139,7 @@ class DocumentProcessor:
 
 def load_aws_config():
     config = configparser.ConfigParser()
-    config.read('./.aws/credentials')
+    config.read( os.path.abspath('./.aws/credentials'))
     aws_access_key_id = config.get("default","aws_access_key_id")
     aws_secret_access_key = config.get("default","aws_secret_access_key")
     region_name = config.get("default","region_name")
