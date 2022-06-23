@@ -129,7 +129,7 @@ class DocumentProcessor:
         try:
             # Upload the file
             # s3_client.Object(self.bucket, s3_location).upload_file(self.document)
-            self.s3.upload_file(Filename=self.document,Bucket=self.bucket,Key=self.pdf_key)
+            self.s3.upload_file(Filename=self.document,Bucket=self.bucket,Key=self.s3_pdf_location)
             # with open(self.document, 'rb') as data:
             #     s3_client.upload_fileobj(data, self.bucket, s3_location)
         except Exception as e:
