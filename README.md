@@ -32,7 +32,7 @@ This script uses the `PyPDF2` and `pandas` libraries to extract tabular data fro
 
 4 AWS integration - Credential 
 
-     ```bash
+```bash
     ./.aws/credentials
     [default]
     aws_access_key_id=xxxxxxxxxxxxxx
@@ -42,8 +42,7 @@ This script uses the `PyPDF2` and `pandas` libraries to extract tabular data fro
 
     [s3]
     bucket=bucketname
-
-    ```
+```
  
 ## Usage
 
