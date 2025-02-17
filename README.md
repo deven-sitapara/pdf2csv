@@ -30,6 +30,21 @@ This script uses the `PyPDF2` and `pandas` libraries to extract tabular data fro
     pip install -r requirements.txt
     ```
 
+4 AWS integration - Credential 
+
+     ```bash
+    ./.aws/credentials
+    [default]
+    aws_access_key_id=xxxxxxxxxxxxxx
+    aws_secret_access_key=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    region_name=us-east-1
+    role_arn=arn:aws:iam::nnnnnnnnnnn:role/roleTopic
+
+    [s3]
+    bucket=bucketname
+
+    ```
+ 
 ## Usage
 
 ```bash
@@ -122,18 +137,6 @@ python pdf2csv.py <input_pdf_file> <output_csv_file>
 
 
 ```
-
-## Credential file format
-
-./.aws/credentials
-[default]
-aws_access_key_id=xxxxxxxxxxxxxx
-aws_secret_access_key=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-region_name=us-east-1
-role_arn=arn:aws:iam::nnnnnnnnnnn:role/roleTopic
-
-[s3]
-bucket=bucketname
 
 ## Activate venv
 
