@@ -13,7 +13,7 @@ This script uses the `PyPDF2` and `pandas` libraries to extract tabular data fro
 1.  Clone the repository:
 
     ```bash
-    git clone [https://github.com/deven-sitapara/pdf2csv.git](https://www.google.com/search?q=https://github.com/deven-sitapara/pdf2csv.git)
+    git clone https://github.com/deven-sitapara/pdf2csv.git
     cd pdf2csv
     ```
 
