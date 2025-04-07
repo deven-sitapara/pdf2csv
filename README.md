@@ -2,7 +2,7 @@
 
 ![Header](./pdf2csv-github-header-image.png)
 
-A Python script to convert PDF files to CSV format.
+A Python tool to convert PDF files to CSV format.
 
 ## Description
 
